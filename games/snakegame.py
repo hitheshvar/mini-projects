@@ -1,10 +1,10 @@
 from tkinter import *
 import random
 
-GAME_WIDTH = 700
-GAME_HEIGHT = 700
-SPEED = 80
-SPACE_SIZE = 50
+GAME_WIDTH = 1000
+GAME_HEIGHT = 600
+SPEED = 100
+SPACE_SIZE = 25
 BODY_PARTS = 3
 SNAKE_COLOR = "#00FF00"
 FOOD_COLOR = "#FF0000"
@@ -75,7 +75,11 @@ def next_turn(snake, food):
         canvas.delete(snake.squares[-1])
         del snake.squares[-1]
     
-    window.after(SPEED, next_turn, snake, food)
+    if check_collisions(snake):
+        game_over()
+    
+    else:
+        window.after(SPEED, next_turn, snake, food)
 
 def change_direction(new_direction):
     
@@ -97,11 +101,24 @@ def change_direction(new_direction):
         if direction != 'up':
             direction = new_direction
 
-def check_collision():
-    pass
+def check_collisions(snake):
+    
+    x, y = snake.coordinates[0]
+    
+    if x<0 or x>= GAME_WIDTH:
+        return True
+    elif y<0 or y>= GAME_HEIGHT:
+        return True
+    
+    for body_part in snake.coordinates[1:]:
+        if x == body_part[0] and y == body_part[1]:
+            return True
+    
+    return False
 
 def game_over():
-    pass
+    canvas.delete(ALL)
+    canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2, font = ('consolas', 70), text ="GAME OVER", fill ="red", tag="gameover")
 
 window = Tk()
 window.title("Snake Game")
